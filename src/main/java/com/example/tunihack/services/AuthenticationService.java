@@ -16,6 +16,8 @@ import com.example.tunihack.repoitories.UserRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
+    private final AuthenticationManager authenticationManager;
+
     private final PasswordEncoder passwordEncoder;
     private final MediaRepo mediaRepo;
     private final EmailSender emailSender;
@@ -52,7 +56,10 @@ public class AuthenticationService {
 
 
 
-
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                request.getEmail(),
+                request.getPassword()
+        ));
 
         var jwtTokenString = "";
         jwtTokenString=jwtService.generateJwtToken(user);
